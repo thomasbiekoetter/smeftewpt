@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smeftewpt"
+version = "0.1.0"
+description = "EWPTs in SMEFT"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy", "scipy"
+]
+authors = [
+  { name = "Thomas Biekötter", email = "thomas.biekoetter@desy.de" }
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
