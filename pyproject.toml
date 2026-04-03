@@ -9,7 +9,9 @@ description = "EWPTs in SMEFT"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-  "numpy", "scipy"
+  "numpy",
+  "scipy",
+  "ableiter @ git+https://gitlab.com/thomas.biekoetter/ableiter.git@master"
 ]
 authors = [
   { name = "Thomas Biekötter", email = "thomas.biekoetter@desy.de" }
