@@ -9,6 +9,7 @@ from smeftewpt.util import is_equal
 from smeftewpt.util import logsave
 from scipy.optimize import minimize
 from ableiter.first import First
+from ableiter.second import Second
 
 
 class FourDim:
@@ -160,12 +161,24 @@ class FourDim:
 
 
     def check_onshellnes(self):
+
         # Add 2nd dimension to x because ableiter only works with arrays
+        x = np.array([self.vev, 0.0])
+
+        # Check tadpole condition
         def f(x): return self.VCW(x[0])
         ab1 = First(f, 2)
         def df(x): return ab1.df_dxi(x, 0)
-        x = np.array([self.vev, 0.0])
         if not is_equal(df(x), 0.0):
             print("dVCW / dh does not vanish in EW minimum.")
             print(df(x - 1.0), df(x), df(x + 1.0))
+            quit()
+
+        # Check curvature, i.e. mH
+        def f(x): return self.Veff(x[0], T=0.0)
+        ab2 = Second(f, 2)
+        def d2f(x): return ab2.d2f_dxidxj(x, 0, 0)
+        if not is_equal(np.sqrt(d2f(x)), self.mh):
+            print("d2Veff / dh2 at T = 0 is not equal to mH^2.")
+            print(np.sqrt(d2f(x)), self.mh)
             quit()
