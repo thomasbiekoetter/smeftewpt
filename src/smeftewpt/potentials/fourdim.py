@@ -10,6 +10,8 @@ from smeftewpt.util import logsave
 from scipy.optimize import minimize
 from ableiter.first import First
 from ableiter.second import Second
+from pythermalfunctions.jspline import Jb_spline as Jb
+from pythermalfunctions.jspline import Jf_spline as Jf
 
 
 class FourDim:
@@ -122,11 +124,38 @@ class FourDim:
         return np.array([mhsq, mgsq, mwsq, mzsq, mtsq])
 
 
-    def Veff(self, h, T=0.0):
+    def VT(self, h, T):
+
+        if is_equal(T, 0.0):
+            return 0.0
+
+        msq = self.calc_msq(h)
+        Tsq = T ** 2
+
+        y = 0.0
+        # Neglect GB contributions for now
+        # Insignificant according to arXiv: 1409.0005
+        for i in [0, 2, 3, 4]:
+            if i != 4:
+                J = Jb(msq[i] / Tsq)
+            else:
+                J = -Jf(msq[i] / Tsq) # Different sign compared to 2012.03953
+                                      # because different definition of Jf
+            y += self.nCW[i] * J
+        y *= Tsq ** 2 / (2.0 * np.pi ** 2)
+
+        return y
+
+
+    def Veff(self, h, T=0.0, remove_cc=True):
         if is_equal(T, 0.0):
             y = self.Vtree(h) + self.VCW(h)
+            if remove_cc:
+                y -= self.Vtree(0) + self.VCW(0)
         else:
-            raise NotImplementedError
+            y = self.Vtree(h) + self.VCW(h) + self.VT(h, T)
+            if remove_cc:
+                y -= self.Vtree(0) + self.VCW(0) + self.VT(0, T)
         return y
 
 
