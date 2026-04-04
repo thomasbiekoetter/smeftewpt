@@ -10,8 +10,12 @@ from smeftewpt.util import logsave
 from scipy.optimize import minimize
 from ableiter.first import First
 from ableiter.second import Second
-from pythermalfunctions.jspline import Jb_spline as Jb
-from pythermalfunctions.jspline import Jf_spline as Jf
+try:
+    from pythermalfunctions.jspline import Jb_spline as Jb
+    from pythermalfunctions.jspline import Jf_spline as Jf
+except ModuleNotFoundError:
+    from cosmoTransitions.finiteT import Jb
+    from cosmoTransitions.finiteT import Jf
 
 
 class FourDim:
@@ -187,6 +191,22 @@ class FourDim:
             print("Mass of mt in EW minimum wrong.")
             print(ms[4], 0.0)
             quit()
+
+
+    def dVeff(self, x, T):
+        x = np.array([x, 0.0])
+        def f(x): return self.Veff(x[0], T)
+        ab1 = First(f, 2)
+        def df(x): return ab1.df_dxi(x, 0)
+        return df(x)
+
+
+    def d2Veff(self, x, T):
+        x = np.array([x, 0.0])
+        def f(x): return self.Veff(x[0], T)
+        ab2 = Second(f, 2, x_eps=1e-4)
+        def d2f(x): return ab2.d2f_dxidxj(x, 0, 0)
+        return d2f(x)
 
 
     def check_onshellnes(self):

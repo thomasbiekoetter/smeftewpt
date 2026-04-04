@@ -2,6 +2,9 @@
 
 ## Instal pythermalfunctions
 
+**You can skip this part if you prefer to use the J-functions
+implemented in CosmoTransitions.**
+
 Install `pythermalfunctions` for the thermal J-functions.
 
 First install `fpm` if not already installed:
