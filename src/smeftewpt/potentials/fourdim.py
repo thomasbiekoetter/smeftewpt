@@ -14,8 +14,8 @@ try:
     from pythermalfunctions.jspline import Jb_spline as Jb
     from pythermalfunctions.jspline import Jf_spline as Jf
 except ModuleNotFoundError:
-    from cosmoTransitions.finiteT import Jb
-    from cosmoTransitions.finiteT import Jf
+    from cosmoTransitions.finiteT import Jb_spline as Jb
+    from cosmoTransitions.finiteT import Jf_spline as Jf
 
 
 class FourDim:
