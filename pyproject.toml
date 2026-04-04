@@ -12,6 +12,7 @@ dependencies = [
   "numpy",
   "scipy",
   "matplotlib",
+  "cosmoTransitions @ git+https://github.com/thomasbiekoetter/CosmoTransitions.git",
   "ableiter @ git+https://gitlab.com/thomas.biekoetter/ableiter.git@master"
 ]
 authors = [
