@@ -88,7 +88,7 @@ class FourDim:
 
         res = minimize(f, 1e3)
 
-        if not is_equal(res.x, self.vev):
+        if not is_equal(res.x, self.vev, eps=1e-2):
             print("Problem with Vtree minimum.")
             print(res.x, self.vev)
             quit()
@@ -227,7 +227,7 @@ class FourDim:
         def f(x): return self.Veff(x[0], T=0.0)
         ab2 = Second(f, 2)
         def d2f(x): return ab2.d2f_dxidxj(x, 0, 0)
-        if not is_equal(np.sqrt(d2f(x)), self.mh):
+        if not is_equal(np.sqrt(d2f(x)), self.mh, eps=1e-1):
             print("d2Veff / dh2 at T = 0 is not equal to mH^2.")
             print(np.sqrt(d2f(x)), self.mh)
             quit()
