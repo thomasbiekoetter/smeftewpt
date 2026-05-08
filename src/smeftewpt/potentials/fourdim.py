@@ -77,7 +77,7 @@ class FourDim:
 
         y = 0.5 * self.musq * h ** 2 +  \
             0.25 * (self.lam - 0.75 * self.Ckin * self.musq) * h ** 4 -  \
-            (1.0 / 6.0) *(0.75 * self.CH + 2.0 * self.Ckin * self.lam) * h ** 6
+            (1.0 / 6.0) * (0.75 * self.CH + 2.0 * self.Ckin * self.lam) * h ** 6
 
         return y
 
