@@ -3,31 +3,31 @@ from scipy.integrate import solve_ivp
 
 
 class SMRGE:
-    """One-loop SM RGEs for all marginal couplings.
+    """One-loop SM RGEs for all marginal couplings and the Higgs mass parameter.
 
     Convention: 16π² dc/d(ln μ) = β(c), MS-bar scheme.
     g_Y is the SM hypercharge coupling (not GUT-normalized).
     Yukawa: third-generation only (yt, yb, ytau).
     Higgs quartic: defined via V ⊃ λ(H†H)².
+    Higgs mass: defined via V ⊃ m²(H†H); EWSB requires m² < 0.
 
     Parameters
     ----------
     mu0 : float
         Reference RG scale in GeV at which inputs are given.
-    g_Y, g2, g3, yt, yb, ytau, lam : float or None
+    g_Y, g2, g3, yt, yb, ytau, lam, m2 : float or None
         Coupling values at mu0.  None → treated as 0 in the ODE.
     """
 
-    COUPLINGS = ['g_Y', 'g2', 'g3', 'yt', 'yb', 'ytau', 'lam']
+    COUPLINGS = ['g_Y', 'g2', 'g3', 'yt', 'yb', 'ytau', 'lam', 'm2']
 
     def __init__(self, mu0, *, g_Y=None, g2=None, g3=None,
-                 yt=None, yb=None, ytau=None, lam=None):
+                 yt=None, yb=None, ytau=None, lam=None, m2=None):
         self.mu0 = mu0
-        vals = [g_Y, g2, g3, yt, yb, ytau, lam]
+        vals = [g_Y, g2, g3, yt, yb, ytau, lam, m2]
         self._y0 = np.array([v if v is not None else 0.0 for v in vals])
         self._sol = None       # cached OdeSolution (dense_output)
         self._sol_t_end = None
-
 
     @staticmethod
     def _beta(t, y):
@@ -41,7 +41,7 @@ class SMRGE:
         term (coefficient +1, Nc=1 for leptons) in β(yt), β(yb) and β(ytau),
         and 3yt² + 3yb² (Nc=3 for quarks) in β(ytau).
         """
-        g_Y, g2, g3, yt, yb, ytau, lam = y
+        g_Y, g2, g3, yt, yb, ytau, lam, m2 = y
         loop = 1.0 / (16.0 * np.pi**2)
 
         g_Y2 = g_Y**2;  g22 = g2**2;  g32 = g3**2
@@ -67,8 +67,10 @@ class SMRGE:
                  + 12*lam*yb2   - 6*yb**4
                  +  4*lam*ytau2 - 2*ytau**4)
 
-        return loop * np.array([b_gY, b_g2, b_g3, b_yt, b_yb, b_ytau, b_lam])
+        # Higgs mass parameter  [Espinosa & Quirós; Ford, Jack & Jones, NPB 387 (1992)]
+        b_m2 = m2 * (12*lam + 6*yt2 + 6*yb2 + 2*ytau2 - 9/2*g22 - 3/2*g_Y2)
 
+        return loop * np.array([b_gY, b_g2, b_g3, b_yt, b_yb, b_ytau, b_lam, b_m2])
 
     def _ensure_solved(self, mu):
         t_end = np.log(mu)
@@ -105,4 +107,5 @@ class SMRGE:
     def get_yb(self, mu):    """Return yb at scale mu (GeV)."""; return self._get(mu, 4)
     def get_ytau(self, mu):  """Return ytau at scale mu (GeV)."""; return self._get(mu, 5)
     def get_lam(self, mu):   """Return lambda at scale mu (GeV)."""; return self._get(mu, 6)
+    def get_m2(self, mu):    """Return m² at scale mu (GeV); negative for EWSB."""; return self._get(mu, 7)
 
