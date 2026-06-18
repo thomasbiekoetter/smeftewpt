@@ -32,6 +32,7 @@ for i in range(0, 5):
     T = 30 + i * 30
     y[i, :] = V(x, T=T) / pot.vev ** 4
     ax.plot(x / pot.vev, y[i, :], color="C0")
+    ax.axhline(0, color="black", alpha=0.3, lw=0.2)
     ax.text(
         x[200] / pot.vev,
         y[i, 200],
@@ -63,7 +64,7 @@ ax.tick_params(
     top=True)
 ax.text(
     -0.5, 0.036,
-    r"$C_H = -4 /\mathrm{TeV}$, $C_{tH} = 0$")
+    r"$C_H = -3 /\mathrm{TeV}^2$, $C_{tH} = 0$")
 
 
 plt.savefig("plot.pdf")
